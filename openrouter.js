@@ -15,6 +15,26 @@ if (!OPENROUTER_API_KEY) {
     process.exit(1);
 }
 
+/// Schema Validasi
+const chatRequestSchema = z.object({
+    prompt: z
+        .string({ required_error: 'Field promp wajib diisi' })
+        .trim()
+        .min(1, 'Prompt tidak boleh kosong')
+        .max(4000, 'Prompt maksimal 4000 karakter'),
+    model: z
+        .string()
+        .trim()
+        .optional()
+        .default(process.env.DEFAULT_MODEL),
+    temperature: z
+    .number()
+    .min(0)
+    .max(2)
+    .optional()
+    .default(0.7)
+});
+
 app.listen(PORT, () => {
     console.log(`Server berjalan di http://localhost:${PORT}`);
 });
