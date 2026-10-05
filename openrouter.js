@@ -35,6 +35,23 @@ const chatRequestSchema = z.object({
     .default(0.7)
 });
 
+// Middleware
+const validateBody = (schema) => (req, sres, next) => {
+    const result =  schema.safeParse(req.body);
+    if (!result.success) {
+        return result.status(400).json({
+            success: false,
+            error: 'Valudasi gagal',
+            details: result.error.errors.map((err) => ({
+                field: err.path.join('.'),
+                message: err.message
+            }))
+        });
+    }
+    req.validateBody = result.data;
+    next();
+};
+
 app.listen(PORT, () => {
     console.log(`Server berjalan di http://localhost:${PORT}`);
 });
